@@ -33,28 +33,40 @@ class HTTPResponse(object):
         self.body = body
 
 class HTTPClient(object):
-    #def get_host_port(self,url):
+    #Refer to https://uofa-cmput404.github.io/cmput404-slides/05-More-HTTP.html#/8
+    #Essentilly, keep up to either first formward slash (after http://, or till end)
+    def get_host_port(self,url):
+        port = ""
+        removed_http = url.replace("http://", "",1)
+        host_port = removed_http.split('/')[0]
+        print(host_port)
+        return host_port
 
     def connect(self, host, port):
+        print("In conenct")
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.connect((host, port))
         return None
 
     def get_code(self, data):
+        print("In code")
         return None
 
     def get_headers(self,data):
+        print("IN HEADER")
         return None
 
     def get_body(self, data):
+        print("In body")
         return None
     
     def sendall(self, data):
+        print("in send all")
         self.socket.sendall(data.encode('utf-8'))
         
     def close(self):
         self.socket.close()
-
+ 
     # read everything from the socket
     def recvall(self, sock):
         buffer = bytearray()
@@ -70,11 +82,20 @@ class HTTPClient(object):
     def GET(self, url, args=None):
         code = 500
         body = ""
+        print(url)
+        host_name = self.get_host_port(url)
+        print(args)
+        print("body: {}".format(body))
+        print("HAD A GET REQUEST")
+        #Need to decide code based on url
+        # print("HAD A GET REQUEST")
+        #Need to call all functions above manually
         return HTTPResponse(code, body)
 
     def POST(self, url, args=None):
         code = 500
         body = ""
+
         return HTTPResponse(code, body)
 
     def command(self, url, command="GET", args=None):
