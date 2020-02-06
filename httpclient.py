@@ -47,28 +47,27 @@ class HTTPClient(object):
         else:
             port = 80
 
-        return (port, host)
+        return (int(port), host)
 
     def connect(self, host, port):
-        print("In conenct")
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.connect((host, port))
         return self.socket
 
     def get_code(self, data):
-        print("In code")
+        code_string = [x for  x in data.split('\n') if "HTTP/1." in x]
+        code = int(code_string[0].split(" ")[1])
+        return(code)
+        
         return None
 
     def get_headers(self,data):
-        print("IN HEADER")
         return None
 
     def get_body(self, data):
-        print("In body")
         return None
     
     def sendall(self, data):
-        print("in send all")
         self.socket.sendall(data.encode('utf-8'))
         
     def close(self):
@@ -85,6 +84,14 @@ class HTTPClient(object):
             else:
                 done = not part
         return buffer.decode('utf-8')
+    
+    def decide_if_localhost(self, host):
+        host_return = ""
+        if "127.0.0.1" in host:
+            host_return = "localhost"
+        else:
+            host_return = host
+        return(host_return)
 
     def GET(self, url, args=None):
         code = 500
@@ -92,47 +99,25 @@ class HTTPClient(object):
 
 
 
-        # print(url)
         (port, host) = self.get_host_port(url)
-        # print(host)
-        remote_ip = socket.gethostbyname(host)
-        # print(remote_ip)
-        payload = 'GET / HTTP/1.0\r\nHost: ' + host + '\r\n\r\n'
-        # print(port)
 
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.connect((host, port))
-        self.socket.sendall(payload.encode())
-        self.socket.shutdown(socket.SHUT_WR)
+        print(port, host)
+        payload = 'GET / HTTP/1.0\r\nHost: ' + host + '\r\n\r\n'
+
+        host = self.decide_if_localhost(host)
+
+        self.connect(host, int(port))
+        self.sendall(payload)
+        self.close()
 
         body = self.recvall(self.socket)
-        # print(body.split('\n'))
-        code = [x for  x in body.split('\n') if "HTTP/1.1" in x][0].split(" ")[1]
-        print(code)
-        # x = self.connect(remote_ip,  int(host_port[0]))
-
-        # get_command = "GET / HTTP/1.1\r\nHost: {}\r\n\r\n".format(host_port[1])
-        # print(get_command)
-
-        # self.sendall(get_command)
-        # self.close()
-
-        # y = self.recvall(x)
-
-        # print(y)
-        # print(x)
-
-        # print(args)
-        # print("body: {}".format(body))
-        # print("HAD A GET REQUEST")
-        #Need to decide code based on url
-        # print("HAD A GET REQUEST")
-        #Need to call all functions above manually
+        code = self.get_code(body)
         return HTTPResponse(code, body)
 
     def POST(self, url, args=None):
         code = 500
         body = ""
+        print(url)
 
         return HTTPResponse(code, body)
 
