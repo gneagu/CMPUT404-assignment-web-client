@@ -29,6 +29,7 @@ def help():
 
 class HTTPResponse(object):
     def __init__(self, code=200, body=""):
+        # self.socket = socket
         self.code = code
         self.body = body
 
@@ -38,15 +39,21 @@ class HTTPClient(object):
     def get_host_port(self,url):
         port = ""
         removed_http = url.replace("http://", "",1)
-        host_port = removed_http.split('/')[0]
-        print(host_port)
-        return host_port
+        host = removed_http.split('/')[0]
+
+        pre_host = host.split(':')
+        if len(pre_host) != 1:
+            port = pre_host[1]
+        else:
+            port = 80
+
+        return (port, host)
 
     def connect(self, host, port):
         print("In conenct")
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.connect((host, port))
-        return None
+        return self.socket
 
     def get_code(self, data):
         print("In code")
@@ -65,7 +72,7 @@ class HTTPClient(object):
         self.socket.sendall(data.encode('utf-8'))
         
     def close(self):
-        self.socket.close()
+        self.socket.shutdown(socket.SHUT_WR)
  
     # read everything from the socket
     def recvall(self, sock):
@@ -82,11 +89,42 @@ class HTTPClient(object):
     def GET(self, url, args=None):
         code = 500
         body = ""
-        print(url)
-        host_name = self.get_host_port(url)
-        print(args)
-        print("body: {}".format(body))
-        print("HAD A GET REQUEST")
+
+
+
+        # print(url)
+        (port, host) = self.get_host_port(url)
+        # print(host)
+        remote_ip = socket.gethostbyname(host)
+        # print(remote_ip)
+        payload = 'GET / HTTP/1.0\r\nHost: ' + host + '\r\n\r\n'
+        # print(port)
+
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket.connect((host, port))
+        self.socket.sendall(payload.encode())
+        self.socket.shutdown(socket.SHUT_WR)
+
+        body = self.recvall(self.socket)
+        # print(body.split('\n'))
+        code = [x for  x in body.split('\n') if "HTTP/1.1" in x][0].split(" ")[1]
+        print(code)
+        # x = self.connect(remote_ip,  int(host_port[0]))
+
+        # get_command = "GET / HTTP/1.1\r\nHost: {}\r\n\r\n".format(host_port[1])
+        # print(get_command)
+
+        # self.sendall(get_command)
+        # self.close()
+
+        # y = self.recvall(x)
+
+        # print(y)
+        # print(x)
+
+        # print(args)
+        # print("body: {}".format(body))
+        # print("HAD A GET REQUEST")
         #Need to decide code based on url
         # print("HAD A GET REQUEST")
         #Need to call all functions above manually
