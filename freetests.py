@@ -246,13 +246,9 @@ class TestHTTPClient(unittest.TestCase):
                 'd':'012345\r67890\n2321321\n\r'}
         print("Sending POST!")
         req = http.POST( url, args=args )
-        print("HERE")
         self.assertTrue(req != None, "None Returned!")
         self.assertTrue(req.code == 200)
         print("Test Post Body: [%s]" % req.body)
-        print("BODY```````````````````````````")
-        print(req.body)
-        print("END````````````````````````````````")
         outargs = json.loads(req.body)
         print(outargs)
         print(outargs==args)
