@@ -53,6 +53,7 @@ class HTTPClient(object):
 
     def connect(self, host, port):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        print(host, port)
         self.socket.connect((host, port))
         return self.socket
 
@@ -102,7 +103,9 @@ class HTTPClient(object):
         (port, new_host, host) = self.get_host_port(url)
         payload = 'GET / HTTP/1.0\r\nHost: ' + host + '\r\n\r\n'
 
-        self.connect(host, int(port))
+        (port, new_host, host) = self.get_host_port(url)
+
+        self.connect(new_host, int(port))
         self.sendall(payload)
         self.close()
 
