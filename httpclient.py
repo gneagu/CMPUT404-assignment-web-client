@@ -34,7 +34,6 @@ class HTTPResponse(object):
         self.body = body
 
 class HTTPClient(object):
-    #Refer to https://uofa-cmput404.github.io/cmput404-slides/05-More-HTTP.html#/8
     #Essentilly, keep up to either first formward slash (after http://, or till end)
     def get_host_port(self,url):
         port = ""
@@ -92,10 +91,10 @@ class HTTPClient(object):
         
         return path
     
-    
     def sendall(self, data):
         self.socket.sendall(data.encode('utf-8'))
-        
+
+    #This shutdown was taken from CMPUT 404 Lab     
     def close(self):
         self.socket.shutdown(socket.SHUT_WR)
  
@@ -127,6 +126,7 @@ class HTTPClient(object):
         
         path = self.get_paths(url, host)
 
+        #Got from https://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html
         payload = 'GET {} HTTP/1.0\r\nHost: '.format(path) + host + '\r\n\r\n'
         path = host
 
@@ -149,7 +149,8 @@ class HTTPClient(object):
 
 
         body_send = self.get_body(args)
-
+        #Refer to https://stackoverflow.com/a/45827588
+        #Refer to https://uofa-cmput404.github.io/cmput404-slides/05-More-HTTP.html#/8
         (port, new_host, host) = self.get_host_port(url)      
         payload = 'POST / HTTP/1.0\r\nHost: %s\r\n\Content-type: text/html\r\nContent-length: %s\r\n\r\n%s' % (host, len(body_send), body_send)
 
