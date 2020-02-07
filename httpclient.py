@@ -99,18 +99,31 @@ class HTTPClient(object):
     def GET(self, url, args=None):
         code = 500
         body = ""
+        path = url
         print(url)
         (port, new_host, host) = self.get_host_port(url)
-        payload = 'GET / HTTP/1.0\r\nHost: ' + host + '\r\n\r\n'
 
-        (port, new_host, host) = self.get_host_port(url)
+        path =path.replace(host, '')
+        print(new_host)
+        print(host)
+        print(path)
+        print("AFTER")
+
+
+        payload = 'GET {} HTTP/1.0\r\nHost: '.format(path) + host + '\r\n\r\n'
+        path = host
+
 
         self.connect(new_host, int(port))
         self.sendall(payload)
         self.close()
 
         body = self.recvall(self.socket)
+
+        print(body)
         code = self.get_code(body)
+
+        print(body)
 
         return HTTPResponse(code, body)
 
