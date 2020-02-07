@@ -67,7 +67,21 @@ class HTTPClient(object):
         return None
 
     def get_body(self, data):
-        return None
+        body_send = ""
+
+        if data != None:
+            pre_string = "{"
+            argss = {}
+            
+            for (i, k) in data.items():
+                argss[i] = [k]
+
+            derp = str(argss).encode('utf-8')
+
+            derp1 = derp.decode('utf-8')
+            body_send = derp1.replace("'",'"')
+        
+        return body_send
 
     def get_paths(self, data, url):
         path = ""
@@ -77,6 +91,7 @@ class HTTPClient(object):
             path = "/"
         
         return path
+    
     
     def sendall(self, data):
         self.socket.sendall(data.encode('utf-8'))
@@ -131,18 +146,9 @@ class HTTPClient(object):
         body = ""
         body_send = ""
 
-        if args != None:
-            pre_string = "{"
-            argss = {}
-            
-            for (i, k) in args.items():
-                argss[i] = [k]
 
-            derp = str(argss).encode('utf-8')
 
-            derp1 = derp.decode('utf-8')
-            body_send = derp1.replace("'",'"')
-            print(body_send)
+        body_send = self.get_body(args)
 
         (port, new_host, host) = self.get_host_port(url)      
         payload = 'POST / HTTP/1.0\r\nHost: %s\r\n\Content-type: text/html\r\nContent-length: %s\r\n\r\n%s' % (host, len(body_send), body_send)
