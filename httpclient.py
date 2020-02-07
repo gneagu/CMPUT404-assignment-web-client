@@ -111,66 +111,49 @@ class HTTPClient(object):
 
         return HTTPResponse(code, body)
 
-    def POST(self, url, args):
+    def POST(self, url, args=None):
         code = 500
         body = ""
+        body_send = ""
 
-        # string_args = string_args + x for x in args
-        # print(string_args) 
-        
-        # print(args)
-        string_args = "{\n"
+        # string_args = {}
+        # if args != None:
+        #     string_args = "{\n"
 
-        for x, y in args.items():
-            # print("LOOPS", x)
-            string_args += '''  "{}" : '{}',\n'''.format(x,y)
+        #     for x, y in args.items():
+        #         # print("LOOPS", x)
+        #         string_args += '''  "{}" : '{}',\n'''.format(x,y)
+
+        #     string_args = string_args + "}"
+
+        if args != None:
+            derp = str({"a": ["aaaaaaaaaaaaa"], "b": ["bbbbbbbbbbbbbbbbbbbbbb"], "c": ["c"], "d": ["012345\r67890\n2321321\n\r"]}).encode('utf-8')
+            derp1 = derp.decode('utf-8')
+            body_send = derp1.replace("'",'"')
+            # print(derp2)
 
 
-        string_args = string_args + "}"
-
-
-
-        # print("URL~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-        # print(url)
-        # print(args)
-        # print(type(args))
-
-        # print("END~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-        # x = '{\n"Id": 12345,\n"Customer": "John Smith",\n"Quantity": 1,\n"Price": 10.00\n}'
-        # print("XXXXXXXXXXXXXXXXXXXXXXX")
-        # print(x)
         (port, new_host, host) = self.get_host_port(url)
-        # payload = 'POST / HTTP/1.0\r\nHost: ' + host + '\r\n\Content-type: text/html\r\nContent-length: 0\r\n\r\n'
+      
+        payload = 'POST / HTTP/1.0\r\nHost: ' + host + '\r\n\Content-type: text/html\r\nContent-length: 0\r\n\r\n'
 
-        payload = 'POST /session HTTP/1.0\r\n\
-Host: ' + host + '''\r\n\
-Content-type: application/json\r\n\
-Content-length: %s\
-\r\n\r\n\
-{"a": "aaaaaaaaaaaaa", "b": "bbbbbbbbbbbbbbbbbbbbbb", "c": "c", "d": "012345\r67890\n2321321\n\r"}''' % (len(str(string_args)))
-
-        # print("URL~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-
-        # print(payload)
-        # # print(len(x), x)
-        # print("END~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-
-
-        #NEED TO MAKE SURE THAT newline and carriage return have double \\ otherwise seen as control characters
-        # https://stackoverflow.com/questions/45695168/send-raw-post-request-using-socket
-        derp = '''{"a": "aaaaaaaaaaaaa", "b": "bbbbbbbbbbbbbbbbbbbbbb", "c": "c", "d": "012345\\r67890\\n2321321\\n\\r"}'''
+#         payload = 'POST /session HTTP/1.0\r\n\
+# Host: ' + host + '''\r\n\
+# Content-type: application/json\r\n\
+# Content-length: %s\
+# \r\n\r\n\
+# {"a": "aaaaaaaaaaaaa", "b": "bbbbbbbbbbbbbbbbbbbbbb", "c": "c", "d": "012345\r67890\n2321321\n\r"}''' % (len(str(string_args)))
+        derp = str({"a": ["aaaaaaaaaaaaa"], "b": ["bbbbbbbbbbbbbbbbbbbbbb"], "c": ["c"], "d": ["012345\r67890\n2321321\n\r"]}).encode('utf-8')
+        derp1 = derp.decode('utf-8')
+        derp2 = derp1.replace("'",'"')
+        print(derp2)
 
         self.connect(new_host, int(port))
         self.sendall(payload)
-        self.close()
-        print("Before body")
         body = self.recvall(self.socket)
-        print("After bpdy``````````````````````````````")
-        print(body)
         code = self.get_code(body)
-        # print(code)
 
-        return HTTPResponse(code, derp)
+        return HTTPResponse(code, body_send)
 
     def command(self, url, command="GET", args=None):
         if (command == "POST"):
