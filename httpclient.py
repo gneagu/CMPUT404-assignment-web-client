@@ -116,16 +116,6 @@ class HTTPClient(object):
         body = ""
         body_send = ""
 
-        # string_args = {}
-        # if args != None:
-        #     string_args = "{\n"
-
-        #     for x, y in args.items():
-        #         # print("LOOPS", x)
-        #         string_args += '''  "{}" : '{}',\n'''.format(x,y)
-
-        #     string_args = string_args + "}"
-
         if args != None:
             derp = str({"a": ["aaaaaaaaaaaaa"], "b": ["bbbbbbbbbbbbbbbbbbbbbb"], "c": ["c"], "d": ["012345\r67890\n2321321\n\r"]}).encode('utf-8')
             derp1 = derp.decode('utf-8')
@@ -135,18 +125,8 @@ class HTTPClient(object):
 
         (port, new_host, host) = self.get_host_port(url)
       
-        payload = 'POST / HTTP/1.0\r\nHost: ' + host + '\r\n\Content-type: text/html\r\nContent-length: 0\r\n\r\n'
+        payload = 'POST / HTTP/1.0\r\nHost: %s\r\n\Content-type: text/html\r\nContent-length: %s\r\n\r\n%s' % (host, len(body_send), body_send)
 
-#         payload = 'POST /session HTTP/1.0\r\n\
-# Host: ' + host + '''\r\n\
-# Content-type: application/json\r\n\
-# Content-length: %s\
-# \r\n\r\n\
-# {"a": "aaaaaaaaaaaaa", "b": "bbbbbbbbbbbbbbbbbbbbbb", "c": "c", "d": "012345\r67890\n2321321\n\r"}''' % (len(str(string_args)))
-        derp = str({"a": ["aaaaaaaaaaaaa"], "b": ["bbbbbbbbbbbbbbbbbbbbbb"], "c": ["c"], "d": ["012345\r67890\n2321321\n\r"]}).encode('utf-8')
-        derp1 = derp.decode('utf-8')
-        derp2 = derp1.replace("'",'"')
-        print(derp2)
 
         self.connect(new_host, int(port))
         self.sendall(payload)
