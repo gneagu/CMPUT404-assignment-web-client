@@ -135,54 +135,14 @@ class HTTPClient(object):
             pre_string = "{"
             argss = {}
             
-            # print(str(args))
             for (i, k) in args.items():
-                # print(i,k)
-                # pre_string += '''"%s": ["%s"],''' % (i,k)
-                # pre_string += R"'%s' : ['%s']," % (i,k)
                 argss[i] = [k]
 
-            print()
-            print()
-            print()
-            print()
-            print()
-
-
-
-            pre_string = pre_string[:-1]  + "}"
-            # print("PRESTRING```````````````")
-
-
-            # print(repr(pre_string))
-            x = repr(pre_string)
-            # print(x)
-        
-            print(pre_string)
-            pre_string = pre_string.encode('utf-8')
-            # derp = str({"a": ["aaaaaaaaaaaaa"], "b": ["bbbbbbbbbbbbbbbbbbbbbb"], "c": ["c"], "d": ["012345\r67890\n2321321\n\r"]}).encode('utf-8')
-            
             derp = str(argss).encode('utf-8')
-            
-            mid_string = pre_string.decode('utf-8')
 
-            print(derp)
             derp1 = derp.decode('utf-8')
             body_send = derp1.replace("'",'"')
             print(body_send)
-            # print(x.encode('utf-8'))
-            # y = x.encode('utf-8')
-            # print(y.decode('utf-8')[1])
-            # print(type(body_send))
-            # print(type(x))
-            # print(x)
-            print()
-            print()
-            print()
-            print()
-            print()
-            print()
-            print()
 
         (port, new_host, host) = self.get_host_port(url)      
         payload = 'POST / HTTP/1.0\r\nHost: %s\r\n\Content-type: text/html\r\nContent-length: %s\r\n\r\n%s' % (host, len(body_send), body_send)
