@@ -46,6 +46,7 @@ class HTTPClient(object):
             port = pre_host[1]
         else:
             port = 80
+        
         new_host = self.decide_if_localhost(host)
 
         return (int(port), new_host, host)
@@ -69,7 +70,6 @@ class HTTPClient(object):
         return None
     
     def sendall(self, data):
-        print(data.encode('utf-8'))
         self.socket.sendall(data.encode('utf-8'))
         
     def close(self):
@@ -98,8 +98,8 @@ class HTTPClient(object):
     def GET(self, url, args=None):
         code = 500
         body = ""
-
-        (port, host) = self.get_host_port(url)
+        print(url)
+        (port, new_host, host) = self.get_host_port(url)
         payload = 'GET / HTTP/1.0\r\nHost: ' + host + '\r\n\r\n'
 
         self.connect(host, int(port))
