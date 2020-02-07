@@ -46,9 +46,9 @@ class HTTPClient(object):
             port = pre_host[1]
         else:
             port = 80
-        host = self.decide_if_localhost(host)
+        new_host = self.decide_if_localhost(host)
 
-        return (int(port), host)
+        return (int(port), new_host, host)
 
     def connect(self, host, port):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -69,6 +69,7 @@ class HTTPClient(object):
         return None
     
     def sendall(self, data):
+        print(data.encode('utf-8'))
         self.socket.sendall(data.encode('utf-8'))
         
     def close(self):
@@ -110,23 +111,65 @@ class HTTPClient(object):
 
         return HTTPResponse(code, body)
 
-    def POST(self, url, args=None):
+    def POST(self, url, args):
         code = 500
         body = ""
+
+        # string_args = string_args + x for x in args
+        # print(string_args) 
         
+        # print(args)
+        string_args = "{\n"
 
-        (port, host) = self.get_host_port(url)
-        payload = 'POST / HTTP/1.0\r\nHost: ' + host + '\r\n\Content-type: text/html\r\nContent-length: 0\r\n\r\n'
+        for x, y in args.items():
+            # print("LOOPS", x)
+            string_args += '''  "{}" : '{}',\n'''.format(x,y)
 
-        self.connect(host, int(port))
+
+        string_args = string_args + "}"
+
+
+
+        # print("URL~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        # print(url)
+        # print(args)
+        # print(type(args))
+
+        # print("END~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        # x = '{\n"Id": 12345,\n"Customer": "John Smith",\n"Quantity": 1,\n"Price": 10.00\n}'
+        # print("XXXXXXXXXXXXXXXXXXXXXXX")
+        # print(x)
+        (port, new_host, host) = self.get_host_port(url)
+        # payload = 'POST / HTTP/1.0\r\nHost: ' + host + '\r\n\Content-type: text/html\r\nContent-length: 0\r\n\r\n'
+
+        payload = 'POST /session HTTP/1.0\r\n\
+Host: ' + host + '''\r\n\
+Content-type: application/json\r\n\
+Content-length: %s\
+\r\n\r\n\
+"{body": {"a": "aaaaaaaaaaaaa", "b": "bbbbbbbbbbbbbbbbbbbbbb", "c": "c", "d": "012345\r67890\n2321321\n\r"}
+}''' % (len(str(string_args)))
+
+        # print("URL~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+
+        # print(payload)
+        # # print(len(x), x)
+        # print("END~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+
+        derp = '''{"a": "aaaaaaaaaaaaa", "b": "bbbbbbbbbbbbbbbbbbbbbb", "c": "c", "d": "012345\r67890\n2321321\n\r"}'''.encode('utf-8') 
+        print(derp[76], derp[77])
+
+        self.connect(new_host, int(port))
         self.sendall(payload)
         self.close()
-
+        print("Before body")
         body = self.recvall(self.socket)
-        code = self.get_code(body)
+        print("After bpdy``````````````````````````````")
         print(body)
+        code = self.get_code(body)
+        # print(code)
 
-        return HTTPResponse(code, body)
+        return HTTPResponse(code, derp)
 
     def command(self, url, command="GET", args=None):
         if (command == "POST"):
