@@ -156,8 +156,10 @@ Content-length: %s\
         # # print(len(x), x)
         # print("END~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
-        derp = '''{"a": "aaaaaaaaaaaaa", "b": "bbbbbbbbbbbbbbbbbbbbbb", "c": "c", "d": "012345\r67890\n2321321\n\r"}'''.encode('utf-8') 
-        print(derp[76], derp[77])
+
+        #NEED TO MAKE SURE THAT newline and carriage return have double \\ otherwise seen as control characters
+        # https://stackoverflow.com/questions/45695168/send-raw-post-request-using-socket
+        derp = '''{"a": ["aaaaaaaaaaaaa"], "b": ["bbbbbbbbbbbbbbbbbbbbbb"], "c": ["c"], "d": ["012345\\r67890\\n2321321\\n\\r"]}'''
 
         self.connect(new_host, int(port))
         self.sendall(payload)
