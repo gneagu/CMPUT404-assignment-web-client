@@ -53,7 +53,6 @@ class HTTPClient(object):
 
     def connect(self, host, port):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        print(host, port)
         self.socket.connect((host, port))
         return self.socket
 
@@ -110,18 +109,10 @@ class HTTPClient(object):
         body = ""
         path = url
         (port, new_host, host) = self.get_host_port(url)
-        path =path.replace(host, '')
         
         path = self.get_paths(url, host)
 
-        if path == "":
-            path = "/"
-        print(path)
-        print("AFTER")
-
-
         payload = 'GET {} HTTP/1.0\r\nHost: '.format(path) + host + '\r\n\r\n'
-        print(payload)
         path = host
 
 
@@ -131,10 +122,7 @@ class HTTPClient(object):
 
         body = self.recvall(self.socket)
 
-        print(body)
         code = self.get_code(body)
-
-        print(body)
 
         return HTTPResponse(code, body)
 
@@ -148,11 +136,8 @@ class HTTPClient(object):
             derp1 = derp.decode('utf-8')
             body_send = derp1.replace("'",'"')
 
-
-        (port, new_host, host) = self.get_host_port(url)
-      
+        (port, new_host, host) = self.get_host_port(url)      
         payload = 'POST / HTTP/1.0\r\nHost: %s\r\n\Content-type: text/html\r\nContent-length: %s\r\n\r\n%s' % (host, len(body_send), body_send)
-
 
         self.connect(new_host, int(port))
         self.sendall(payload)

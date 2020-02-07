@@ -180,9 +180,6 @@ class TestHTTPClient(unittest.TestCase):
         req = http.GET( url )
         self.assertTrue(req != None, "None Returned!")
         self.assertTrue(req.code == 200)
-        print("REQ``````````````")
-        print(req.body)
-        print(path)
         self.assertTrue(req.body.find(path)>=0, "Data: [%s] " % req.body)
 
     def testGETHeaders(self):
@@ -221,19 +218,12 @@ class TestHTTPClient(unittest.TestCase):
                 'b':'bbbbbbbbbbbbbbbbbbbbbb',
                 'c':'c',
                 'd':'012345\r67890\n2321321\n\r'}
-        print("Sending POST!")
         req = http.POST( url, args=args )
         self.assertTrue(req != None, "None Returned!")
         self.assertTrue(req.code == 200)
         print("Test Post Body: [%s]" % req.body)
         outargs = json.loads(req.body)
-        print(outargs)
-        print(outargs==args)
-        print(outargs["a"][0])
-        print(outargs.__class__)
         for key in args:
-            print(key, args[key])
-            print(outargs[key])
             self.assertTrue(args[key] == outargs[key][0], "Key [%s] not found" % key)
         for key in outargs:
             self.assertTrue(args[key] == outargs[key][0], "Key [%s] not found" % key)
