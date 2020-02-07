@@ -147,8 +147,7 @@ Host: ' + host + '''\r\n\
 Content-type: application/json\r\n\
 Content-length: %s\
 \r\n\r\n\
-"{body": {"a": "aaaaaaaaaaaaa", "b": "bbbbbbbbbbbbbbbbbbbbbb", "c": "c", "d": "012345\r67890\n2321321\n\r"}
-}''' % (len(str(string_args)))
+{"a": "aaaaaaaaaaaaa", "b": "bbbbbbbbbbbbbbbbbbbbbb", "c": "c", "d": "012345\r67890\n2321321\n\r"}''' % (len(str(string_args)))
 
         # print("URL~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
@@ -159,7 +158,7 @@ Content-length: %s\
 
         #NEED TO MAKE SURE THAT newline and carriage return have double \\ otherwise seen as control characters
         # https://stackoverflow.com/questions/45695168/send-raw-post-request-using-socket
-        derp = '''{"a": ["aaaaaaaaaaaaa"], "b": ["bbbbbbbbbbbbbbbbbbbbbb"], "c": ["c"], "d": ["012345\\r67890\\n2321321\\n\\r"]}'''
+        derp = '''{"a": "aaaaaaaaaaaaa", "b": "bbbbbbbbbbbbbbbbbbbbbb", "c": "c", "d": "012345\\r67890\\n2321321\\n\\r"}'''
 
         self.connect(new_host, int(port))
         self.sendall(payload)
