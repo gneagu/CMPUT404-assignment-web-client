@@ -69,6 +69,15 @@ class HTTPClient(object):
 
     def get_body(self, data):
         return None
+
+    def get_paths(self, data, url):
+        path = ""
+        path = data.replace("http://","")
+        path = path.replace(url, "")
+        if path == "":
+            path = "/"
+        
+        return path
     
     def sendall(self, data):
         self.socket.sendall(data.encode('utf-8'))
@@ -100,17 +109,19 @@ class HTTPClient(object):
         code = 500
         body = ""
         path = url
-        print(url)
         (port, new_host, host) = self.get_host_port(url)
-
         path =path.replace(host, '')
-        print(new_host)
-        print(host)
+        
+        path = self.get_paths(url, host)
+
+        if path == "":
+            path = "/"
         print(path)
         print("AFTER")
 
 
         payload = 'GET {} HTTP/1.0\r\nHost: '.format(path) + host + '\r\n\r\n'
+        print(payload)
         path = host
 
 
@@ -136,7 +147,6 @@ class HTTPClient(object):
             derp = str({"a": ["aaaaaaaaaaaaa"], "b": ["bbbbbbbbbbbbbbbbbbbbbb"], "c": ["c"], "d": ["012345\r67890\n2321321\n\r"]}).encode('utf-8')
             derp1 = derp.decode('utf-8')
             body_send = derp1.replace("'",'"')
-            # print(derp2)
 
 
         (port, new_host, host) = self.get_host_port(url)
